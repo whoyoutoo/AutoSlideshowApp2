@@ -45,8 +45,10 @@ class MainActivity : AppCompatActivity() {
             getContentsInfo()
         }
 
-            go_button.setOnClickListener {
+        go_button.setOnClickListener {
 
+            if (cursor != null) {
+                if (mTimer == null) {
                     if (cursor!!.moveToNext()) {
                         // indexからIDを取得し、そのIDから画像のURIを取得する
                         val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
@@ -63,10 +65,19 @@ class MainActivity : AppCompatActivity() {
 
                         imageView.setImageURI(imageUri)
                     }
+                }
+
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), PERMISSIONS_REQUEST_CODE)
+                }
             }
+        }
 
-            back_button.setOnClickListener {
+        back_button.setOnClickListener {
 
+            if (cursor != null) {
+                if (mTimer == null) {
                     if (cursor!!.moveToPrevious()) {
                         // indexからIDを取得し、そのIDから画像のURIを取得する
                         val fieldIndex = cursor!!.getColumnIndex(MediaStore.Images.Media._ID)
@@ -83,9 +94,17 @@ class MainActivity : AppCompatActivity() {
 
                         imageView.setImageURI(imageUri)
                     }
+                }
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), PERMISSIONS_REQUEST_CODE)
+                }
             }
+        }
 
-            auto_button.setOnClickListener {
+        auto_button.setOnClickListener {
+
+            if (cursor != null) {
 
                 if (mTimer == null) {
                     mTimer = Timer()
@@ -128,8 +147,13 @@ class MainActivity : AppCompatActivity() {
 
                     auto_button.setText("再生")
                 }
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), PERMISSIONS_REQUEST_CODE)
+                }
             }
         }
+    }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
             when (requestCode) {
@@ -137,7 +161,8 @@ class MainActivity : AppCompatActivity() {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     getContentsInfo()
                 }
-        }
+
+            }
     }
 
     private fun getContentsInfo() {
